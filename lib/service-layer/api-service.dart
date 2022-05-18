@@ -22,9 +22,11 @@ class ApiService{
       }
     } on SocketException catch (e){
       print("Socket exception occured: "+ e.toString());
+      return "1";
     }
     catch (e) {
       print("Some exception occured: "+ e.toString());
+      return "2";
     }
   }
 

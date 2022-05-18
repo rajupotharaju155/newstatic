@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:newstatic/models/newModel.dart';
 
 import '../../const.dart';
 
 class NewsTile extends StatelessWidget {
+ final NewsModel newsModel;
+ NewsTile({this.newsModel});
 
+ 
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -29,7 +33,7 @@ class NewsTile extends StatelessWidget {
               child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("Moneycontrol",
+                  Text(newsModel.source,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     color: kPrimaryDark
@@ -37,7 +41,7 @@ class NewsTile extends StatelessWidget {
                   ),
                   SizedBox(height: 5,),
                   Flexible(
-                    child: Text("Market LIVE Updates: Sensex, Nifty trade higher led by financials, auto, power; realty drags - Moneycontrol",
+                    child: Text(newsModel.title,
                     overflow: TextOverflow.fade,
                     style: TextStyle(
                       fontWeight: FontWeight.w300,
@@ -58,7 +62,7 @@ class NewsTile extends StatelessWidget {
                 borderRadius: BorderRadius.circular(5),
                 image: DecorationImage(
                   fit: BoxFit.cover,
-                  image: NetworkImage('https://images.moneycontrol.com/static-mcnews/2020/01/BSE_Sensex_Stocks_market_up_green-770x433.png'))
+                  image: NetworkImage(newsModel.urlToImage))
               )
             ),
           )
