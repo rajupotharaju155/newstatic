@@ -1,14 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
-import 'package:newstatic/const.dart';
-import 'package:newstatic/models/newModel.dart';
-
 import 'api-constants.dart';
 
 class ApiService{
-
-
+  
   static Future<dynamic> getTopHeadlinesFromCountry(String countryCode)async{
     try {
       print("Getting headlines for country: "+ countryCode);

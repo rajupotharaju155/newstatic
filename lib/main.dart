@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:newstatic/businesss-layer/country-news/country_news_cubit.dart';
+import 'package:newstatic/const.dart';
 import 'package:newstatic/presentation-layer/HomePage.dart';
 
 void main() {
@@ -18,9 +19,10 @@ class MyApp extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
-        title: 'Flutter Demo',
+        title: 'Newtatic',
         theme: ThemeData(
-          primarySwatch: Colors.blue,
+          primarySwatch: createMaterialColor(kPrimaryLight),
+          scaffoldBackgroundColor: kSecondaryLight
         ),
         home: HomePage(),
       ),
