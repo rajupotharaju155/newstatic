@@ -4,6 +4,9 @@ import 'package:newstatic/businesss-layer/country-news/country_news_cubit.dart';
 import 'package:newstatic/const.dart';
 import 'package:newstatic/presentation-layer/HomePage.dart';
 
+import 'businesss-layer/single-news/single_news_cubit.dart';
+import 'presentation-layer/newsDetailPage.dart';
+
 void main() {
   runApp(MyApp());
 }
@@ -17,6 +20,9 @@ class MyApp extends StatelessWidget {
         BlocProvider(
           create: (context) => CountryNewsCubit(),
         ),
+        BlocProvider(
+          create: (context) => SingleNewsCubit(),
+        ),
       ],
       child: MaterialApp(
         title: 'Newtatic',
@@ -24,7 +30,12 @@ class MyApp extends StatelessWidget {
           primarySwatch: createMaterialColor(kPrimaryLight),
           scaffoldBackgroundColor: kSecondaryLight
         ),
-        home: HomePage(),
+        // home: HomePage(),
+        routes: {
+          HomePage.Route: (context) => HomePage(),
+          NewsDetailPage.Route: (context) => NewsDetailPage(),
+
+        }
       ),
     );
   }

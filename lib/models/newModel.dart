@@ -1,3 +1,4 @@
+import 'package:timeago/timeago.dart' as timeago;
 class NewsModel{
   final String source;
   final String title;
@@ -6,6 +7,7 @@ class NewsModel{
   final String urlToImage;
   final String publishedAt;
   final String content;
+  String timeAgo;
 
   NewsModel({
     this.source,
@@ -15,9 +17,13 @@ class NewsModel{
     this.urlToImage,
     this.publishedAt,
     this.content,
+    this.timeAgo
   });
 
   factory NewsModel.fromjson(Map<String, dynamic> data) {
+    DateTime newsDate = DateTime.parse(data['publishedAt']);
+    String minAgo = timeago.format(newsDate);
+    print(minAgo);
     return NewsModel(
       source: data['source']['name'],
       title: data['title'],
@@ -26,6 +32,7 @@ class NewsModel{
       urlToImage: data['urlToImage'],
       publishedAt: data['publishedAt'],
       content: data['content'],
+      timeAgo: minAgo
     );
   }
 }

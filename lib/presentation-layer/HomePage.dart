@@ -6,6 +6,7 @@ import 'package:newstatic/models/newModel.dart';
 import 'package:newstatic/presentation-layer/widgets/newsTile.dart';
 
 class HomePage extends StatefulWidget {
+  static const Route = '/';
   @override
   State<HomePage> createState() => _HomePageState();
 }
@@ -145,30 +146,33 @@ class _HomePageState extends State<HomePage> {
             ),
 
             Expanded(
-              child: BlocBuilder<CountryNewsCubit, CountryNewsState>(
-                builder: (context, state) {
-                  if(state is CountryNewsLoading){
-                    return Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }else if(state is CountryNewsException){
-                    return Center(
-                      child: Text("We couldnt fetch news at the monment"),
-                    );
-                  }else if(state is CountryNewsLoaded){
-                    List<NewsModel> newsList = state.newsList;
-                    return ListView.builder(
-                      itemCount: newsList.length,
-                      itemBuilder: (context, index) {
-                        return NewsTile(newsModel: newsList[index]);
-                      }); 
-                  }else{
-                    return Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-                  
-                },
+              child: RefreshIndicator(
+                onRefresh: ()=> BlocProvider.of<CountryNewsCubit>(context).getCountryNews("in"),
+                child: BlocBuilder<CountryNewsCubit, CountryNewsState>(
+                  builder: (context, state) {
+                    if(state is CountryNewsLoading){
+                      return Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }else if(state is CountryNewsException){
+                      return Center(
+                        child: Text("We couldnt fetch news at the monment"),
+                      );
+                    }else if(state is CountryNewsLoaded){
+                      List<NewsModel> newsList = state.newsList;
+                      return ListView.builder(
+                        itemCount: newsList.length,
+                        itemBuilder: (context, index) {
+                          return NewsTile(newsModel: newsList[index]);
+                        }); 
+                    }else{
+                      return Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                    
+                  },
+                ),
               ),
             )
           ],
