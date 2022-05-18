@@ -81,8 +81,8 @@ class NewsTile extends StatelessWidget {
                         colorFilter: ColorFilter.mode(Colors.black26, BlendMode.darken)),
                   ),
                 ),
-                placeholder: (context, url) => Icon(Icons.image, size: 40),
-                errorWidget: (context, url, error) => Icon(Icons.error),
+                placeholder: (context, url) => Icon(Icons.image, size: 70, color: Colors.grey[400],),
+                errorWidget: (context, url, error) => Icon(Icons.error, size: 70, color: Colors.grey[400],),
                 fadeInDuration: Duration(seconds: 1),
               ),
             )

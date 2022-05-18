@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:newstatic/businesss-layer/country-news/country_news_cubit.dart';
+import 'package:newstatic/businesss-layer/search-news/search_news_cubit.dart';
 import 'package:newstatic/const.dart';
 import 'package:newstatic/models/newModel.dart';
+import 'package:newstatic/presentation-layer/searchPage.dart';
 import 'package:newstatic/presentation-layer/widgets/newsTile.dart';
 
 class HomePage extends StatefulWidget {
@@ -103,7 +105,10 @@ class _HomePageState extends State<HomePage> {
             Container(
                 padding: EdgeInsets.symmetric(vertical: 5),
                 child: InkWell(
-                  onTap: () {},
+                  onTap: () {
+                    BlocProvider.of<SearchNewsCubit>(context).resetSearchResults();
+                    Navigator.of(context).pushNamed(SearchPage.Route);
+                  },
                   splashColor: Colors.grey,
                   child: Container(
                     height: 40,
