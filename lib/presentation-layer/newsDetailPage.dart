@@ -1,15 +1,27 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:newstatic/businesss-layer/single-news/single_news_cubit.dart';
 import 'package:newstatic/const.dart';
 import 'package:newstatic/models/newModel.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 
 class NewsDetailPage extends StatelessWidget {
   static const Route = 'news-detail-page';
   static NewsModel newsModel;
-  // NewsDetailPage({this.newsModel});
-  // newsModel
+  
+  void _launchUrl(String urlString) async {
+    if(await canLaunch(urlString)){
+      print("Can launch");
+      launch(urlString);
+    }else{
+      Fluttertoast.showToast(msg: "Cannot launch this news");
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -86,12 +98,32 @@ class NewsDetailPage extends StatelessWidget {
                   color: kPrimaryDark
                 ),
                 ),
-                Text(newsModel.content??"No content found",
-                style: TextStyle(
-                  fontWeight: FontWeight.w400,
-                  color: kPrimaryDark
+                Expanded(
+                  child: Text(newsModel.content??"No content found",
+                  style: TextStyle(
+                    fontWeight: FontWeight.w400,
+                    color: kPrimaryDark
+                  ),
+                  ),
                 ),
-                ),
+                GestureDetector(
+                  onTap: ()=> _launchUrl(newsModel.url),
+                  child: Container(
+                    width: 200,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      // mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text("See full story",
+                        style: TextStyle(
+                          color: kPrimaryLight 
+                        ),
+                        ),
+                        Icon(Icons.arrow_forward_ios_rounded, size: 15, color: kPrimaryLight )
+                      ],
+                    ),
+                  ),
+                )
               ],
             ),
           ),

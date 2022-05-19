@@ -12,6 +12,7 @@ import 'presentation-layer/newsDetailPage.dart';
 import 'presentation-layer/searchPage.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(MyApp());
 }
 
