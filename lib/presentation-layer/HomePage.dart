@@ -6,6 +6,7 @@ import 'package:newstatic/const.dart';
 import 'package:newstatic/models/newModel.dart';
 import 'package:newstatic/presentation-layer/searchPage.dart';
 import 'package:newstatic/presentation-layer/widgets/newsTile.dart';
+import 'package:newstatic/presentation-layer/widgets/sourceModal.dart';
 
 class HomePage extends StatefulWidget {
   static const Route = '/';
@@ -14,11 +15,19 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
+  List<Map<String, dynamic>> sourceCodeList1 = sourceCodeList;
   @override
   void initState() {
     BlocProvider.of<CountryNewsCubit>(context).getCountryNews("in");
     super.initState();
+  }
+
+  void showSourceModalBottomSheet(){
+    showModalBottomSheet(
+      context: context, 
+      builder: (context){
+        return SourceModalSheet();
+      });
   }
 
 
@@ -33,36 +42,40 @@ class _HomePageState extends State<HomePage> {
             child: Text("Newstatic.com")),
         toolbarHeight: 70,
         actions: [
-          Container(
-            margin: EdgeInsets.all(5),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Text(
-                  "Location".toUpperCase(),
-                  style: TextStyle(fontSize: 11),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Icon(
-                      Icons.location_on_rounded,
-                      size: 12,
-                    ),
-                    Text(
-                      "India",
-                      style:
-                          TextStyle(fontSize: 11, fontWeight: FontWeight.w300),
-                    ),
-                  ],
-                )
-              ],
+          InkWell(
+            onTap: (){},
+            
+            child: Container(
+              margin: EdgeInsets.all(5),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text(
+                    "Location".toUpperCase(),
+                    style: TextStyle(fontSize: 11),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Icon(
+                        Icons.location_on_rounded,
+                        size: 12,
+                      ),
+                      Text(
+                        "India",
+                        style:
+                            TextStyle(fontSize: 11, fontWeight: FontWeight.w300),
+                      ),
+                    ],
+                  )
+                ],
+              ),
             ),
           )
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: showSourceModalBottomSheet,
         child: Icon(Icons.filter_alt_outlined),
       ),
       body: Container(
@@ -82,7 +95,7 @@ class _HomePageState extends State<HomePage> {
             // child: Text("Get US news")),
             // ElevatedButton(
             // onPressed: (){
-            //   ApiService.getTopHeadlinesFromSource('the-washington-post');
+            //   ApiService.getTopHeadlinesFromSource('bbc-news');
             // },
             // child: Text("Get the-washington-post news")),
             // ElevatedButton(

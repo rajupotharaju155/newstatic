@@ -30,18 +30,28 @@ class ApiService{
     }
   }
 
-  static Future<void> getTopHeadlinesFromSource(String source)async{
+  static Future<dynamic> getTopHeadlinesFromSource(String source)async{
     try {
       print("Getting headlines for source: "+ source);
       final response = await http.get(BASE_URL + 'top-headlines?sources=$source&apiKey=$API_KEY');
       print(response); 
       print(response.statusCode);
-      print(response.body);
+      var jsondata = jsonDecode(response.body);
+      var status = jsondata['status'];
+      if(status == 'ok'){
+        List<dynamic> articleList = jsondata['articles'];
+        print(articleList);
+        return articleList;
+      }else if(status == 'error'){
+        return "0";
+      }
     } on SocketException catch (e){
       print("Socket exception occured: "+ e.toString());
+      return "1";
     }
     catch (e) {
       print("Some exception occured: "+ e.toString());
+      return "2";
     }
   }
 

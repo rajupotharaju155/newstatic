@@ -62,29 +62,35 @@ const List<Map<String, dynamic>> countryCodeList = [
   }
 ];
 
-const List<Map<String, dynamic>> sourceCodeList = [
+List<Map<String, dynamic>> sourceCodeList = [
   {
   "id": "the-washington-post",
-  "name": "The Washington Post"
+  "name": "The Washington Post",
+  'value': false
   },
   {
   "id": "cnn",
-  "name": "CNN"
+  "name": "CNN",
+  'value': false
   },
   {
   "id": "politico",
-  "name": "Politico"
+  "name": "Politico",
+  'value': false
   },
   {
   "id": "the-verge",
-  "name": "The Verge"
+  "name": "The Verge",
+  'value': false
   },
   {
   "id": "axios",
-  "name": "Axios"
+  "name": "Axios",
+  'value': false
   },
   {
   "id": "bbc-news",
-  "name": "BBC News"
+  "name": "BBC News",
+  'value': false
   },
 ];

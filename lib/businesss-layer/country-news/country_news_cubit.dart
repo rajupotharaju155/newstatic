@@ -24,4 +24,19 @@ class CountryNewsCubit extends Cubit<CountryNewsState> {
       emit(CountryNewsLoaded(newsList: newsList));
     }
   }
+
+    Future<void> getsourceNews(String sourceList)async{
+    emit(CountryNewsLoading());
+    dynamic result = await ApiService.getTopHeadlinesFromSource(sourceList);
+    if(result=='0' || result=='2'){
+      emit(CountryNewsException());
+    }else if(result=='1'){
+      emit(CountryNewsSocketException());
+    }else{
+      List<dynamic> news = result;
+      newsList = news.map((e) => NewsModel.fromjson(e)).toList();
+      print(newsList);
+      emit(CountryNewsLoaded(newsList: newsList));
+    }
+  }
 }

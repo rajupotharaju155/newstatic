@@ -86,7 +86,7 @@ class NewsDetailPage extends StatelessWidget {
                   color: kPrimaryDark
                 ),
                 ),
-                Text(newsModel.content,
+                Text(newsModel.content??"No content found",
                 style: TextStyle(
                   fontWeight: FontWeight.w400,
                   color: kPrimaryDark
