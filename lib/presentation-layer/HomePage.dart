@@ -3,13 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:newstatic/businesss-layer/country-news/country_news_cubit.dart';
 import 'package:newstatic/businesss-layer/filter-count/filter_count_cubit.dart';
-import 'package:newstatic/businesss-layer/search-news/search_news_cubit.dart';
 import 'package:newstatic/businesss-layer/selected-country/selected_country_cubit.dart';
-import 'package:newstatic/const.dart';
 import 'package:newstatic/models/newModel.dart';
-import 'package:newstatic/presentation-layer/searchPage.dart';
 import 'package:newstatic/presentation-layer/widgets/errorWidget.dart';
 import 'package:newstatic/presentation-layer/widgets/newsTile.dart';
+import 'package:newstatic/presentation-layer/widgets/noInernetWidget.dart';
+import 'package:newstatic/presentation-layer/widgets/searchWidget.dart';
 import 'package:newstatic/presentation-layer/widgets/sourceModal.dart';
 
 import 'widgets/countryModal.dart';
@@ -21,13 +20,18 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  bool isfetching = false;
   int filterCount = 0;
   String countryName = '';
+  String countryCode = '';
+  final ScrollController _scrollController = ScrollController();
+  List<NewsModel> _newsList = [];
   @override
   void initState() {
     BlocProvider.of<FilterCountCubit>(context).setFilterCount(0);
     BlocProvider.of<CountryNewsCubit>(context).getCountryNews("in", "india");
-    BlocProvider.of<SelectedCountryCubit>(context).setSelectedCountry("in", "india");
+    BlocProvider.of<SelectedCountryCubit>(context)
+        .setSelectedCountry("in", "india");
     super.initState();
   }
 
@@ -72,9 +76,10 @@ class _HomePageState extends State<HomePage> {
                   ),
                   BlocBuilder<SelectedCountryCubit, SelectedCountryState>(
                     builder: (context, state) {
-                      if(state is SelectedCountrySet){
+                      if (state is SelectedCountrySet) {
                         countryName = state.countryName;
-                      }else if(state is CountryNewsLoading){
+                        countryCode = state.countryCode;
+                      } else if (state is CountryNewsLoading) {
                         countryName = '';
                       }
                       return Row(
@@ -99,19 +104,27 @@ class _HomePageState extends State<HomePage> {
           )
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: showSourceModalBottomSheet,
-        child: BlocBuilder<FilterCountCubit, FilterCountState>(
-          builder: (context, state) {
-            if (state is FilterCountSet) {
-              filterCount = state.filterCount;
-            }
-            return Badge(
-                showBadge: filterCount > 0 ? true : false,
-                badgeContent: Text(filterCount.toString()),
-                child: Icon(Icons.filter_alt_outlined));
-          },
-        ),
+      floatingActionButton: BlocBuilder<CountryNewsCubit, CountryNewsState>(
+        builder: (context, state) {
+          if (state is CountryNewsException ||
+              state is CountryNewsSocketException) {
+            return Container();
+          }
+          return FloatingActionButton(
+            onPressed: showSourceModalBottomSheet,
+            child: BlocBuilder<FilterCountCubit, FilterCountState>(
+              builder: (context, state) {
+                if (state is FilterCountSet) {
+                  filterCount = state.filterCount;
+                }
+                return Badge(
+                    showBadge: filterCount > 0 ? true : false,
+                    badgeContent: Text(filterCount.toString()),
+                    child: Icon(Icons.filter_alt_outlined));
+              },
+            ),
+          );
+        },
       ),
       body: Container(
         padding: EdgeInsets.all(15),
@@ -150,39 +163,15 @@ class _HomePageState extends State<HomePage> {
             // child: Text("Get Query news - tata consultancy")),
 
             //search
-            Container(
-                padding: EdgeInsets.symmetric(vertical: 5),
-                child: InkWell(
-                  onTap: () {
-                    BlocProvider.of<SearchNewsCubit>(context)
-                        .resetSearchResults();
-                    Navigator.of(context).pushNamed(SearchPage.Route);
-                  },
-                  splashColor: Colors.grey,
-                  child: Container(
-                    height: 40,
-                    decoration: BoxDecoration(
-                        color: kSecondaryDark.withOpacity(0.4),
-                        borderRadius: BorderRadius.circular(6)),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "Search for news, topics..",
-                            style: TextStyle(color: Colors.grey),
-                          ),
-                          Icon(
-                            Icons.search,
-                            color: Colors.grey,
-                            size: 20,
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                )),
+            BlocBuilder<CountryNewsCubit, CountryNewsState>(
+              builder: (context, state) {
+                if (state is CountryNewsException ||
+                    state is CountryNewsSocketException) {
+                  return Container();
+          }     
+                return SearchWidget();
+              },
+            ),
 
             //top headlines
             Container(
@@ -203,33 +192,50 @@ class _HomePageState extends State<HomePage> {
               child: RefreshIndicator(
                 onRefresh: () => BlocProvider.of<CountryNewsCubit>(context)
                     .getCountryNews("in", "india"),
-                child: BlocBuilder<CountryNewsCubit, CountryNewsState>(
+                child: BlocConsumer<CountryNewsCubit, CountryNewsState>(
+                  listener: (context, state) {
+                    if(state is CountryNewsPaginationLoading){
+                      isfetching = true;
+                      ScaffoldMessenger.of(context)
+                      .showSnackBar(SnackBar(content: Text("More news loading..")));
+                    }
+                  },
                   builder: (context, state) {
                     if (state is CountryNewsLoading) {
+                      _newsList.clear();
                       return Center(
                         child: CircularProgressIndicator(),
                       );
                     } else if (state is CountryNewsException) {
-                      return CustomErrorWidget(status: state.status, message:state.message );
-                    } else if(state is CountryNewsSocketException){
-                      return Center(
-                        child: Text("Please check your internet connection and try again",
-                        textAlign: TextAlign.center,
-                        ),
-                      ); 
-                    }
-                    else if (state is CountryNewsLoaded) {
+                      return CustomErrorWidget(
+                          status: state.status, message: state.message);
+                    } else if (state is CountryNewsSocketException) {
+                      return NoInternetWidget();
+                    } else if (state is CountryNewsLoaded) {
+                      isfetching = false;
                       List<NewsModel> newsList = state.newsList;
-                      return ListView.builder(
-                          itemCount: newsList.length,
-                          itemBuilder: (context, index) {
-                            return NewsTile(newsModel: newsList[index]);
-                          });
-                    } else {
-                      return Center(
-                        child: CircularProgressIndicator(),
-                      );
+                      _newsList.addAll(newsList);
+                      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                      // return null;
                     }
+                      // List<NewsModel> newsList = state.newsList;
+                      // _newsList.addAll(newsList);
+                      return ListView.builder(
+                        controller: _scrollController
+                            ..addListener(() {
+                              if (_scrollController.offset ==
+                                      _scrollController.position.maxScrollExtent && isfetching==false
+                                  ) {
+                                print("Reached end of loop");
+                                // print(BlocProvider.of<SelectedCountryCubit>(context)..countryCode);
+                                if(filterCount>0) BlocProvider.of<CountryNewsCubit>(context).getsourceNewsPagination();
+                                else  BlocProvider.of<CountryNewsCubit>(context).getCountryNewsPagination(countryCode, countryName);
+                              }
+                            }),
+                          itemCount: _newsList.length,
+                          itemBuilder: (context, index) {
+                            return NewsTile(newsModel: _newsList[index], index: index);
+                          });
                   },
                 ),
               ),

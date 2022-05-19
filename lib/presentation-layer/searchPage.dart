@@ -5,6 +5,7 @@ import 'package:newstatic/const.dart';
 import 'package:newstatic/models/newModel.dart';
 import 'package:newstatic/presentation-layer/widgets/errorWidget.dart';
 import 'package:newstatic/presentation-layer/widgets/newsTile.dart';
+import 'package:newstatic/presentation-layer/widgets/noInernetWidget.dart';
 
 class SearchPage extends StatefulWidget {
 static const Route = '/search-page';
@@ -14,7 +15,11 @@ static const Route = '/search-page';
 }
 
 class _SearchPageState extends State<SearchPage> {
+  bool isfetching = false;
+  List<NewsModel> _newsList = [];
   String query = '';
+  final ScrollController _scrollController = ScrollController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -86,17 +91,31 @@ class _SearchPageState extends State<SearchPage> {
             ),
 
             Expanded(
-              child: BlocBuilder<SearchNewsCubit, SearchNewsState>(
+              child: BlocConsumer<SearchNewsCubit, SearchNewsState>(
+                listener: (context, state) {
+                  if(state is SearchNewsLoadingPagination){
+                    isfetching = true;
+                    ScaffoldMessenger.of(context)
+                      .showSnackBar(SnackBar(content: Text("More news results..")));
+                  }
+                },
                 builder: (context, state) {
                   if(state is SearchNewsLoading){
+                    _newsList.clear();
                     return Center(
                       child: CircularProgressIndicator(),
                     );
                   }else if(state is SearchNewsException){
                     return CustomErrorWidget(status: state.status, message:state.message );
-                  }else if(state is SearchNewsLoaded){
+                  }else if(state is SearchNewsSocketException){
+                    return NoInternetWidget();
+                  }
+                  else if(state is SearchNewsLoaded){
+                    isfetching = false;
                     List<NewsModel> newsList = state.searchList;
-                    if(newsList.isEmpty){
+                    _newsList.addAll(newsList);
+                    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                    if(_newsList.isEmpty){
                       return Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -111,12 +130,12 @@ class _SearchPageState extends State<SearchPage> {
                         ]
                       );
                     }
-                    return ListView.builder(
-                      itemCount: newsList.length,
-                      itemBuilder: (context, index) {
-                        return NewsTile(newsModel: newsList[index]);
-                      }); 
-                      }else{
+                    // return ListView.builder(
+                    //   itemCount: _newsList.length,
+                    //   itemBuilder: (context, index) {
+                    //     return NewsTile(newsModel: _newsList[index]);
+                    //   }); 
+                    }else if(state is SearchNewsInitial){
                         return Center(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -132,6 +151,20 @@ class _SearchPageState extends State<SearchPage> {
                           ),
                         );
                       }
+                      return ListView.builder(
+                        controller: _scrollController
+                            ..addListener(() {
+                              if (_scrollController.offset ==
+                                      _scrollController.position.maxScrollExtent && isfetching==false
+                                  ) {
+                                print("Reached end of loop");
+                                BlocProvider.of<SearchNewsCubit>(context).getSearchNewsPagination();
+                              }
+                            }),
+                          itemCount: _newsList.length,
+                          itemBuilder: (context, index) {
+                            return NewsTile(newsModel: _newsList[index], index: index);
+                          });
                   
                 },
               ),

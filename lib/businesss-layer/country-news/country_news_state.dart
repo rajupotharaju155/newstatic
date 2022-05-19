@@ -4,6 +4,7 @@ part of 'country_news_cubit.dart';
 abstract class CountryNewsState {}
 
 class CountryNewsLoading extends CountryNewsState {}
+class CountryNewsPaginationLoading extends CountryNewsState {}
 class CountryNewsSocketException extends CountryNewsState {}
 
 class CountryNewsException extends CountryNewsState {

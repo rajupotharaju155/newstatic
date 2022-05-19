@@ -8,7 +8,8 @@ import '../../const.dart';
 
 class NewsTile extends StatelessWidget {
  final NewsModel newsModel;
- NewsTile({this.newsModel});
+ final int index;
+ NewsTile({this.newsModel, this.index});
 
  
   @override
