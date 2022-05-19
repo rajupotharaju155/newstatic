@@ -12,13 +12,15 @@ class ApiService{
       print(response); 
       print(response.statusCode);
       var jsondata = jsonDecode(response.body);
+      print(jsondata);
       var status = jsondata['status'];
+      print(status);
       if(status == 'ok'){
         List<dynamic> articleList = jsondata['articles'];
         // print(articleList);
         return articleList;
       }else if(status == 'error'){
-        return "0";
+        return {"status": jsondata['status'], "code": jsondata['code'], "message": jsondata['message']};
       }
     } on SocketException catch (e){
       print("Socket exception occured: "+ e.toString());
@@ -26,7 +28,7 @@ class ApiService{
     }
     catch (e) {
       print("Some exception occured: "+ e.toString());
-      return "2";
+       return {"status": "Error","message": e.toString()};
     }
   }
 
@@ -43,7 +45,7 @@ class ApiService{
         // print(articleList);
         return articleList;
       }else if(status == 'error'){
-        return "0";
+        return {"status": jsondata['status'], "code": jsondata['code'], "message": jsondata['message']};
       }
     } on SocketException catch (e){
       print("Socket exception occured: "+ e.toString());
@@ -51,7 +53,7 @@ class ApiService{
     }
     catch (e) {
       print("Some exception occured: "+ e.toString());
-      return "2";
+      return {"status": "Error","message": e.toString()};
     }
   }
 
@@ -69,7 +71,7 @@ class ApiService{
         // print(articleList);
         return articleList;
       }else if(status == 'error'){
-        return "0";
+        return {"status": jsondata['status'], "code": jsondata['code'], "message": jsondata['message']};
       }
     } on SocketException catch (e){
       print("Socket exception occured: "+ e.toString());
@@ -77,7 +79,7 @@ class ApiService{
     }
     catch (e) {
       print("Some exception occured: "+ e.toString());
-      return "2";
+      return {"status": "Error","message": e.toString()};
     }
   }
 }

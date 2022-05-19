@@ -27,14 +27,10 @@ MaterialColor createMaterialColor(Color color) {
 }
 
 
-const List<Map<String, dynamic>> countryCodeList = [
+List<Map<String, dynamic>> countryCodeList = [
   {
     'code': 'in',
     'name': 'india'
-  },
-  {
-    'code': 'np',
-    'name': 'nepal'
   },
   {
     'code': 'us',

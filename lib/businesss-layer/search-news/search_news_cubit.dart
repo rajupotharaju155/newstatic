@@ -13,8 +13,10 @@ class SearchNewsCubit extends Cubit<SearchNewsState> {
   Future<void> getSearchNews(String query)async{
     emit(SearchNewsLoading());
     dynamic result = await ApiService.getEverythingFromQuery(query);
-    if(result=='0' || result=='2'){
-      emit(SearchNewsException());
+    if(result is Map){
+      print("result is map");
+      print(result);
+      emit(SearchNewsException(status: result['status'], message: result['message']));
     }else if(result=='1'){
       emit(SearchNewsSocketException());
     }else{

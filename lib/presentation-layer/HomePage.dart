@@ -4,11 +4,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:newstatic/businesss-layer/country-news/country_news_cubit.dart';
 import 'package:newstatic/businesss-layer/filter-count/filter_count_cubit.dart';
 import 'package:newstatic/businesss-layer/search-news/search_news_cubit.dart';
+import 'package:newstatic/businesss-layer/selected-country/selected_country_cubit.dart';
 import 'package:newstatic/const.dart';
 import 'package:newstatic/models/newModel.dart';
 import 'package:newstatic/presentation-layer/searchPage.dart';
+import 'package:newstatic/presentation-layer/widgets/errorWidget.dart';
 import 'package:newstatic/presentation-layer/widgets/newsTile.dart';
 import 'package:newstatic/presentation-layer/widgets/sourceModal.dart';
+
+import 'widgets/countryModal.dart';
 
 class HomePage extends StatefulWidget {
   static const Route = '/';
@@ -18,10 +22,12 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int filterCount = 0;
+  String countryName = '';
   @override
   void initState() {
     BlocProvider.of<FilterCountCubit>(context).setFilterCount(0);
-    BlocProvider.of<CountryNewsCubit>(context).getCountryNews("in");
+    BlocProvider.of<CountryNewsCubit>(context).getCountryNews("in", "india");
+    BlocProvider.of<SelectedCountryCubit>(context).setSelectedCountry("in", "india");
     super.initState();
   }
 
@@ -30,6 +36,15 @@ class _HomePageState extends State<HomePage> {
         context: context,
         builder: (context) {
           return SourceModalSheet();
+        });
+  }
+
+  void showCountryModalBottomSheet() {
+    print('in country modal');
+    showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return CounryModalSheet();
         });
   }
 
@@ -45,7 +60,7 @@ class _HomePageState extends State<HomePage> {
         toolbarHeight: 70,
         actions: [
           InkWell(
-            onTap: () {},
+            onTap: showCountryModalBottomSheet,
             child: Container(
               margin: EdgeInsets.all(5),
               child: Column(
@@ -55,19 +70,28 @@ class _HomePageState extends State<HomePage> {
                     "Location".toUpperCase(),
                     style: TextStyle(fontSize: 11),
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Icon(
-                        Icons.location_on_rounded,
-                        size: 12,
-                      ),
-                      Text(
-                        "India",
-                        style: TextStyle(
-                            fontSize: 11, fontWeight: FontWeight.w300),
-                      ),
-                    ],
+                  BlocBuilder<SelectedCountryCubit, SelectedCountryState>(
+                    builder: (context, state) {
+                      if(state is SelectedCountrySet){
+                        countryName = state.countryName;
+                      }else if(state is CountryNewsLoading){
+                        countryName = '';
+                      }
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Icon(
+                            Icons.location_on_rounded,
+                            size: 12,
+                          ),
+                          Text(
+                            countryName.toUpperCase(),
+                            style: TextStyle(
+                                fontSize: 11, fontWeight: FontWeight.w300),
+                          ),
+                        ],
+                      );
+                    },
                   )
                 ],
               ),
@@ -79,12 +103,12 @@ class _HomePageState extends State<HomePage> {
         onPressed: showSourceModalBottomSheet,
         child: BlocBuilder<FilterCountCubit, FilterCountState>(
           builder: (context, state) {
-            if(state is FilterCountSet){
+            if (state is FilterCountSet) {
               filterCount = state.filterCount;
             }
             return Badge(
-                showBadge: filterCount>0? true: false,
-                badgeContent:  Text(filterCount.toString()),
+                showBadge: filterCount > 0 ? true : false,
+                badgeContent: Text(filterCount.toString()),
                 child: Icon(Icons.filter_alt_outlined));
           },
         ),
@@ -178,7 +202,7 @@ class _HomePageState extends State<HomePage> {
             Expanded(
               child: RefreshIndicator(
                 onRefresh: () => BlocProvider.of<CountryNewsCubit>(context)
-                    .getCountryNews("in"),
+                    .getCountryNews("in", "india"),
                 child: BlocBuilder<CountryNewsCubit, CountryNewsState>(
                   builder: (context, state) {
                     if (state is CountryNewsLoading) {
@@ -186,10 +210,15 @@ class _HomePageState extends State<HomePage> {
                         child: CircularProgressIndicator(),
                       );
                     } else if (state is CountryNewsException) {
+                      return CustomErrorWidget(status: state.status, message:state.message );
+                    } else if(state is CountryNewsSocketException){
                       return Center(
-                        child: Text("We couldnt fetch news at the monment"),
-                      );
-                    } else if (state is CountryNewsLoaded) {
+                        child: Text("Please check your internet connection and try again",
+                        textAlign: TextAlign.center,
+                        ),
+                      ); 
+                    }
+                    else if (state is CountryNewsLoaded) {
                       List<NewsModel> newsList = state.newsList;
                       return ListView.builder(
                           itemCount: newsList.length,

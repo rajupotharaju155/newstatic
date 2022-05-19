@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:newstatic/businesss-layer/search-news/search_news_cubit.dart';
 import 'package:newstatic/const.dart';
 import 'package:newstatic/models/newModel.dart';
+import 'package:newstatic/presentation-layer/widgets/errorWidget.dart';
 import 'package:newstatic/presentation-layer/widgets/newsTile.dart';
 
 class SearchPage extends StatefulWidget {
@@ -92,9 +93,7 @@ class _SearchPageState extends State<SearchPage> {
                       child: CircularProgressIndicator(),
                     );
                   }else if(state is SearchNewsException){
-                    return Center(
-                      child: Text("We couldnt fetch news at the monment"),
-                    );
+                    return CustomErrorWidget(status: state.status, message:state.message );
                   }else if(state is SearchNewsLoaded){
                     List<NewsModel> newsList = state.searchList;
                     if(newsList.isEmpty){

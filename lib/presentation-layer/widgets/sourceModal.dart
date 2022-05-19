@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:newstatic/businesss-layer/country-news/country_news_cubit.dart';
 import 'package:newstatic/businesss-layer/filter-count/filter_count_cubit.dart';
+import 'package:newstatic/businesss-layer/selected-country/selected_country_cubit.dart';
 
 import '../../const.dart';
 
@@ -22,7 +23,8 @@ class _SourceModalSheetState extends State<SourceModalSheet> {
     BlocProvider.of<FilterCountCubit>(context).setFilterCount(appliedFilters.length);  
     if(appliedFilters.isEmpty) {
       print("All filters removed");
-      BlocProvider.of<CountryNewsCubit>(context).getCountryNews("in");
+      BlocProvider.of<CountryNewsCubit>(context).getCountryNews("in", "india");
+      BlocProvider.of<SelectedCountryCubit>(context).setSelectedCountry("in", "india");
       Navigator.of(context).pop();
       Fluttertoast.showToast(
       msg: "Filters removed",

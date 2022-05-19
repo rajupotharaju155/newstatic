@@ -23,7 +23,7 @@ class NewsModel{
   factory NewsModel.fromjson(Map<String, dynamic> data) {
     DateTime newsDate = DateTime.parse(data['publishedAt']);
     String minAgo = timeago.format(newsDate);
-    print(minAgo);
+    // print(minAgo);
     return NewsModel(
       source: data['source']['name'],
       title: data['title'],
