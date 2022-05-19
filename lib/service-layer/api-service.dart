@@ -15,7 +15,7 @@ class ApiService{
       var status = jsondata['status'];
       if(status == 'ok'){
         List<dynamic> articleList = jsondata['articles'];
-        print(articleList);
+        // print(articleList);
         return articleList;
       }else if(status == 'error'){
         return "0";
@@ -40,7 +40,7 @@ class ApiService{
       var status = jsondata['status'];
       if(status == 'ok'){
         List<dynamic> articleList = jsondata['articles'];
-        print(articleList);
+        // print(articleList);
         return articleList;
       }else if(status == 'error'){
         return "0";
@@ -66,7 +66,7 @@ class ApiService{
       print(status);
       if(status == 'ok'){
         List<dynamic> articleList = jsondata['articles'];
-        print(articleList);
+        // print(articleList);
         return articleList;
       }else if(status == 'error'){
         return "0";

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:newstatic/businesss-layer/country-news/country_news_cubit.dart';
+import 'package:newstatic/businesss-layer/filter-count/filter_count_cubit.dart';
 
 import '../../const.dart';
 
@@ -12,13 +13,14 @@ class SourceModalSheet extends StatefulWidget {
 }
 
 class _SourceModalSheetState extends State<SourceModalSheet> {
+ List<Map<dynamic, dynamic>> sourceCodeList1 = sourceCodeList.map((e) => new Map.from(e)).toList();
 
-  List<String> filtersSelected = [];
-  void addSourceToList(String sourceCode){
-    filtersSelected.add(sourceCode);
-  }
   void applyFilters(){
-    if(filtersSelected.isEmpty) {
+    sourceCodeList = sourceCodeList1.map((e) => e).toList();
+    List<Map<dynamic, dynamic>> appliedFilters = sourceCodeList.where((element) => element['value']==true).toList();
+    print(appliedFilters.length);
+    BlocProvider.of<FilterCountCubit>(context).setFilterCount(appliedFilters.length);  
+    if(appliedFilters.isEmpty) {
       print("All filters removed");
       BlocProvider.of<CountryNewsCubit>(context).getCountryNews("in");
       Navigator.of(context).pop();
@@ -26,21 +28,21 @@ class _SourceModalSheetState extends State<SourceModalSheet> {
       msg: "Filters removed",
       toastLength: Toast.LENGTH_SHORT,
     );
-      return;
-    }
-    String finalString = filtersSelected.join(',');
-    print(finalString);
-    BlocProvider.of<CountryNewsCubit>(context).getsourceNews(finalString);
+    }else{  
+      List selectedIdsList = appliedFilters.map((e) => e['id']).toList();
+      String finalString = selectedIdsList.join(',');
+      print(finalString);
+      BlocProvider.of<CountryNewsCubit>(context).getsourceNews(finalString);
 
-    Navigator.of(context).pop();
-    Fluttertoast.showToast(
-      msg: "Filters Applied",
-      toastLength: Toast.LENGTH_SHORT,
-    );
+      Navigator.of(context).pop();
+      Fluttertoast.showToast(
+        msg: "Filters Applied",
+        toastLength: Toast.LENGTH_SHORT,
+      );
+      }
+
   }
-  void removeSourceFromList(String sourceCode){
-    filtersSelected.remove(sourceCode);
-  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -57,19 +59,19 @@ class _SourceModalSheetState extends State<SourceModalSheet> {
               ),
               Expanded(
                 child: ListView.builder(
-                  itemCount: sourceCodeList.length,
+                  itemCount: sourceCodeList1.length,
                   itemBuilder: (context, index){
                     return CheckboxListTile(
-                      title: Text(sourceCodeList[index]['name'],
+                      title: Text(sourceCodeList1[index]['name'],
                       style: TextStyle(color: Colors.grey[800]),
                       ),
-                      value: sourceCodeList[index]['value'], 
+                      value: sourceCodeList1[index]['value'], 
                       onChanged: (val){
                         setState(() {
-                        sourceCodeList[index]['value']  = val;
+                        sourceCodeList1[index]['value']  = val;
                         });
-                        if(val) addSourceToList(sourceCodeList[index]['id']);
-                        else removeSourceFromList(sourceCodeList[index]['id']);
+                        // if(val) addSourceToList(sourceCodeList1[index]['id']);
+                        // else removeSourceFromList(sourceCodeList1[index]['id']);
                       });
                   }),
               ),

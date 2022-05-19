@@ -22,7 +22,7 @@ class NewsTile extends StatelessWidget {
       child: Container(
         height: 130,
         padding: EdgeInsets.all(10),
-        margin: EdgeInsets.symmetric(vertical: 5),
+        margin: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(5),
           color: Colors.white,
@@ -75,6 +75,7 @@ class NewsTile extends StatelessWidget {
                 imageUrl: newsModel.urlToImage??"https://cdn4.iconfinder.com/data/icons/ui-beast-4/32/Ui-12-512.png",
                 imageBuilder: (context, imageProvider) => Container(
                   decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
                     image: DecorationImage(
                         image: imageProvider,
                         fit: BoxFit.cover,

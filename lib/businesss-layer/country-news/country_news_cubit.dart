@@ -20,7 +20,7 @@ class CountryNewsCubit extends Cubit<CountryNewsState> {
     }else{
       List<dynamic> news = result;
       newsList = news.map((e) => NewsModel.fromjson(e)).toList();
-      print(newsList);
+      // print(newsList);
       emit(CountryNewsLoaded(newsList: newsList));
     }
   }

@@ -5,6 +5,7 @@ import 'package:newstatic/businesss-layer/search-news/search_news_cubit.dart';
 import 'package:newstatic/const.dart';
 import 'package:newstatic/presentation-layer/HomePage.dart';
 
+import 'businesss-layer/filter-count/filter_count_cubit.dart';
 import 'businesss-layer/single-news/single_news_cubit.dart';
 import 'presentation-layer/newsDetailPage.dart';
 import 'presentation-layer/searchPage.dart';
@@ -27,6 +28,9 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) => SearchNewsCubit(),
+        ),
+        BlocProvider(
+          create: (context) => FilterCountCubit(),
         ),
       ],
       child: MaterialApp(

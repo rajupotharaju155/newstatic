@@ -1,6 +1,8 @@
+import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:newstatic/businesss-layer/country-news/country_news_cubit.dart';
+import 'package:newstatic/businesss-layer/filter-count/filter_count_cubit.dart';
 import 'package:newstatic/businesss-layer/search-news/search_news_cubit.dart';
 import 'package:newstatic/const.dart';
 import 'package:newstatic/models/newModel.dart';
@@ -15,21 +17,21 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<Map<String, dynamic>> sourceCodeList1 = sourceCodeList;
+  int filterCount = 0;
   @override
   void initState() {
+    BlocProvider.of<FilterCountCubit>(context).setFilterCount(0);
     BlocProvider.of<CountryNewsCubit>(context).getCountryNews("in");
     super.initState();
   }
 
-  void showSourceModalBottomSheet(){
+  void showSourceModalBottomSheet() {
     showModalBottomSheet(
-      context: context, 
-      builder: (context){
-        return SourceModalSheet();
-      });
+        context: context,
+        builder: (context) {
+          return SourceModalSheet();
+        });
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -43,8 +45,7 @@ class _HomePageState extends State<HomePage> {
         toolbarHeight: 70,
         actions: [
           InkWell(
-            onTap: (){},
-            
+            onTap: () {},
             child: Container(
               margin: EdgeInsets.all(5),
               child: Column(
@@ -63,8 +64,8 @@ class _HomePageState extends State<HomePage> {
                       ),
                       Text(
                         "India",
-                        style:
-                            TextStyle(fontSize: 11, fontWeight: FontWeight.w300),
+                        style: TextStyle(
+                            fontSize: 11, fontWeight: FontWeight.w300),
                       ),
                     ],
                   )
@@ -76,7 +77,17 @@ class _HomePageState extends State<HomePage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: showSourceModalBottomSheet,
-        child: Icon(Icons.filter_alt_outlined),
+        child: BlocBuilder<FilterCountCubit, FilterCountState>(
+          builder: (context, state) {
+            if(state is FilterCountSet){
+              filterCount = state.filterCount;
+            }
+            return Badge(
+                showBadge: filterCount>0? true: false,
+                badgeContent:  Text(filterCount.toString()),
+                child: Icon(Icons.filter_alt_outlined));
+          },
+        ),
       ),
       body: Container(
         padding: EdgeInsets.all(15),
@@ -119,7 +130,8 @@ class _HomePageState extends State<HomePage> {
                 padding: EdgeInsets.symmetric(vertical: 5),
                 child: InkWell(
                   onTap: () {
-                    BlocProvider.of<SearchNewsCubit>(context).resetSearchResults();
+                    BlocProvider.of<SearchNewsCubit>(context)
+                        .resetSearchResults();
                     Navigator.of(context).pushNamed(SearchPage.Route);
                   },
                   splashColor: Colors.grey,
@@ -165,30 +177,30 @@ class _HomePageState extends State<HomePage> {
 
             Expanded(
               child: RefreshIndicator(
-                onRefresh: ()=> BlocProvider.of<CountryNewsCubit>(context).getCountryNews("in"),
+                onRefresh: () => BlocProvider.of<CountryNewsCubit>(context)
+                    .getCountryNews("in"),
                 child: BlocBuilder<CountryNewsCubit, CountryNewsState>(
                   builder: (context, state) {
-                    if(state is CountryNewsLoading){
+                    if (state is CountryNewsLoading) {
                       return Center(
                         child: CircularProgressIndicator(),
                       );
-                    }else if(state is CountryNewsException){
+                    } else if (state is CountryNewsException) {
                       return Center(
                         child: Text("We couldnt fetch news at the monment"),
                       );
-                    }else if(state is CountryNewsLoaded){
+                    } else if (state is CountryNewsLoaded) {
                       List<NewsModel> newsList = state.newsList;
                       return ListView.builder(
-                        itemCount: newsList.length,
-                        itemBuilder: (context, index) {
-                          return NewsTile(newsModel: newsList[index]);
-                        }); 
-                    }else{
+                          itemCount: newsList.length,
+                          itemBuilder: (context, index) {
+                            return NewsTile(newsModel: newsList[index]);
+                          });
+                    } else {
                       return Center(
                         child: CircularProgressIndicator(),
                       );
                     }
-                    
                   },
                 ),
               ),

@@ -62,7 +62,7 @@ const List<Map<String, dynamic>> countryCodeList = [
   }
 ];
 
-List<Map<String, dynamic>> sourceCodeList = [
+List<Map<dynamic, dynamic>> sourceCodeList = [
   {
   "id": "the-washington-post",
   "name": "The Washington Post",

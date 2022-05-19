@@ -38,8 +38,8 @@ class NewsDetailPage extends StatelessWidget {
                               ColorFilter.mode(Colors.black38, BlendMode.darken)),
                     ),
                   ),
-                  placeholder: (context, url) => Icon(Icons.image, size: 40),
-                  errorWidget: (context, url, error) => Icon(Icons.error),
+                  placeholder: (context, url) => Center(child: Icon(Icons.image, size: 40)),
+                  errorWidget: (context, url, error) => Center(child: Icon(Icons.error)),
                   fadeInDuration: Duration(seconds: 1),
                 ),
                 SafeArea(
