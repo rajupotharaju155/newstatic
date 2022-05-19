@@ -130,38 +130,6 @@ class _HomePageState extends State<HomePage> {
         padding: EdgeInsets.all(15),
         child: Column(
           children: [
-            // ElevatedButton(
-            //   onPressed: (){
-            //     BlocProvider.of<CountryNewsCubit>(context).getCountryNews("in");
-            //     // ApiService.getTopHeadlinesFromCountry("in");
-            //   },
-            //   child: Text("Get India news")),
-            // ElevatedButton(
-            // onPressed: (){
-            //   ApiService.getTopHeadlinesFromCountry("us");
-            // },
-            // child: Text("Get US news")),
-            // ElevatedButton(
-            // onPressed: (){
-            //   ApiService.getTopHeadlinesFromSource('bbc-news');
-            // },
-            // child: Text("Get the-washington-post news")),
-            // ElevatedButton(
-            // onPressed: (){
-            //   ApiService.getTopHeadlinesFromSource('cnn');
-            // },
-            // child: Text("Get cnn news")),
-            // ElevatedButton(
-            // onPressed: (){
-            //   ApiService.getEverythingFromQuery('terrorism');
-            // },
-            // child: Text("Get Query news - terrorism")),
-            // ElevatedButton(
-            // onPressed: (){
-            //   ApiService.getEverythingFromQuery('tata consultancy');
-            // },
-            // child: Text("Get Query news - tata consultancy")),
-
             //search
             BlocBuilder<CountryNewsCubit, CountryNewsState>(
               builder: (context, state) {
