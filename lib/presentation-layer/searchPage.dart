@@ -157,6 +157,7 @@ class _SearchPageState extends State<SearchPage> {
                               if (_scrollController.offset ==
                                       _scrollController.position.maxScrollExtent && isfetching==false
                                   ) {
+                                    isfetching = true;
                                 print("Reached end of loop");
                                 BlocProvider.of<SearchNewsCubit>(context).getSearchNewsPagination();
                               }

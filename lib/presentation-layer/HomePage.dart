@@ -216,16 +216,29 @@ class _HomePageState extends State<HomePage> {
                       List<NewsModel> newsList = state.newsList;
                       _newsList.addAll(newsList);
                       ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                      // return null;
+                      if(_newsList.isEmpty){
+                      return Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.announcement_outlined,color: Colors.grey[400], size: 80),
+                          Text("No results found",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.grey[600]
+                          ),
+                          ),
+                        ]
+                      );
                     }
-                      // List<NewsModel> newsList = state.newsList;
-                      // _newsList.addAll(newsList);
+                    }
                       return ListView.builder(
                         controller: _scrollController
                             ..addListener(() {
                               if (_scrollController.offset ==
                                       _scrollController.position.maxScrollExtent && isfetching==false
                                   ) {
+                                isfetching = true;
                                 print("Reached end of loop");
                                 // print(BlocProvider.of<SelectedCountryCubit>(context)..countryCode);
                                 if(filterCount>0) BlocProvider.of<CountryNewsCubit>(context).getsourceNewsPagination();
